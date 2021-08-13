@@ -1,0 +1,50 @@
+definitions:
+  RefreshResponse:
+    properties:
+      accessToken:
+        default: ''
+        type: string
+      msg:
+        default: ''
+        type: string
+        x-nullable: true
+    type: object
+host: \
+info:
+  description: Feryv OAuth Server API documentation
+  title: Feryv OAuth
+  version: 1.0.0
+paths:
+  /api/refresh:
+    get:
+      description: Refreshes the users access token.
+      operationId: refresh
+      parameters:
+      - default: null
+        in: header
+        name: Feryvrefreshtoken
+        required: false
+        type: string
+        x-nullable: true
+      - default: null
+        in: header
+        name: Feryvcsrftoken
+        required: false
+        type: string
+        x-nullable: true
+      responses:
+        default:
+          description: The status of the refresh attempt, an access token to use for
+            protected routes.
+          schema:
+            $ref: '#/definitions/RefreshResponse'
+      security:
+      - Refresh_Token_Cookie: []
+      - CSRF_Refresh: []
+      - Bearer: []
+      tags:
+      - Authenticate
+schemes:
+- http
+- https
+swagger: '2.0'
