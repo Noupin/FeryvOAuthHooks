@@ -3,7 +3,7 @@
   "author": "Noupin",
   "license": "MIT",
   "description": "Hooks that integrate with Feryv OAuth for authentication.",
-  "version": "0.1.3",
+  "version": "0.1.31",
   "private": false,
   "keywords": [
     "feryv",
@@ -20,7 +20,7 @@
     "url": "https://github.com/Noupin/FeryvOAuthHooks/issues"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@noupin"
+    "@noupin:registry": "https://npm.pkg.github.com"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
