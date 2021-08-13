@@ -11,6 +11,7 @@ export interface IFetchCallbacks{
   onAuthSuccess: responseCallback
   onError: errorCallback
   onAuthError: errorCallback
+  onSecondAuthError: errorCallback
 }
 
 export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configuration){
@@ -42,7 +43,7 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
         await request()
       }
       catch(error){
-        callbacks.onAuthError(error)
+        callbacks.onSecondAuthError(error)
       }
       if(setLoading) setLoading(false)
     }
