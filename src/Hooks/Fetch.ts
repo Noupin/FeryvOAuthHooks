@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 //First Party Imports
-import { AuthenticateApi, Configuration } from "../Swagger";
+import { AuthenticateApi, Configuration, RefreshRequest } from "../Swagger";
 import { errorCallback, responseCallback } from "../types";
 
 
@@ -21,6 +21,7 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
     swaggerFunction: ((requestParameters: T) => Promise<V>) | (() => Promise<V>),
     authDependency: any,
     setData: React.Dispatch<React.SetStateAction<V | undefined>> | ((requestParmaters: V, ...args: any[]) => void),
+    refreshParams: RefreshRequest={},
     setLoading?: React.Dispatch<React.SetStateAction<boolean>>):
     (requestParams?: T, ...args: any[]) => Promise<void>{
   
@@ -49,7 +50,7 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
   
     async function authenticate(){
       try{
-        const response = await authApi.refresh({})
+        const response = await authApi.refresh(refreshParams)
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
       }

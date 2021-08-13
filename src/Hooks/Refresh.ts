@@ -1,5 +1,5 @@
 //First Party Imports
-import { AuthenticateApi, Configuration } from "../Swagger";
+import { AuthenticateApi, Configuration, RefreshRequest } from "../Swagger";
 import { errorCallback, responseCallback } from "../types";
 
 
@@ -12,13 +12,13 @@ interface IRefreshCallbacks{
 export function refreshHookFactory(callbacks: IRefreshCallbacks, config: Configuration){
   const authApi = new AuthenticateApi(config)
 
-  function useRefresh(setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{
+  function useRefresh(refreshParams: RefreshRequest={}, setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{
     
     async function fetchRefresh(){
       if(setLoading) setLoading(true);
 
       try{
-        const response = await authApi.refresh({})
+        const response = await authApi.refresh(refreshParams)
         callbacks.onSuccess(response)
       }
       catch(error){
