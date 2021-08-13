@@ -15,17 +15,21 @@ export interface IFetchCallbacks{
   onSecondAuthError: errorCallback
 }
 
+export interface IFetchParams<T, U, V>{
+  thisArg: U
+  swaggerFunction: ((requestParameters: T) => Promise<V>) | (() => Promise<V>)
+  authDependency: any
+  setData: React.Dispatch<React.SetStateAction<V | undefined>> | ((requestParmaters: V, ...args: any[]) => void)
+  refreshParams?: RefreshRequest
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 export function fetchHookFactory(callbacks: IFetchCallbacks, config: ConfigurationParameters){
   const authApi = new AuthenticateApi(new Configuration(config))
 
 
-  function useFetch<T, U, V>(thisArg: U,
-    swaggerFunction: ((requestParameters: T) => Promise<V>) | (() => Promise<V>),
-    authDependency: any,
-    setData: React.Dispatch<React.SetStateAction<V | undefined>> | ((requestParmaters: V, ...args: any[]) => void),
-    refreshParams: RefreshRequest={},
-    setLoading?: React.Dispatch<React.SetStateAction<boolean>>):
-    (requestParams?: T, ...args: any[]) => Promise<void>{
+  function useFetch<T, U, V>(fetchParams: IFetchParams<T, U, V>):
+  (requestParams?: T, ...args: any[]) => Promise<void>{
   
     const reqAgain = useRef(false)
     const reqParams = useRef<T>()
@@ -33,9 +37,9 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
   
   
     async function request(){
-      const response = await swaggerFunction.call(thisArg, reqParams.current!)
-      if(!argParams.current) setData(response);
-      else setData(response, ...argParams.current);
+      const response = await fetchParams.swaggerFunction.call(fetchParams.thisArg, reqParams.current!)
+      if(!argParams.current) fetchParams.setData(response);
+      else fetchParams.setData(response, ...argParams.current);
     }
   
   
@@ -46,13 +50,13 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
       catch(error){
         callbacks.onSecondAuthError(error)
       }
-      if(setLoading) setLoading(false)
+      if(fetchParams.setLoading) fetchParams.setLoading(false)
     }
   
   
     async function authenticate(){
       try{
-        const response = await authApi.refresh(refreshParams)
+        const response = await authApi.refresh(fetchParams.refreshParams ? fetchParams.refreshParams : {})
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
       }
@@ -63,7 +67,7 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
   
   
     async function fetchCall(requestParams?: T, ...args: any[]){
-      if(setLoading) setLoading(true);
+      if(fetchParams.setLoading) fetchParams.setLoading(true);
   
       reqParams.current = requestParams
       argParams.current = args
@@ -80,8 +84,8 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
         }
       }
   
-      if(setLoading && !reqAgain.current){
-        setLoading(false);
+      if(fetchParams.setLoading && !reqAgain.current){
+        fetchParams.setLoading(false);
         reqAgain.current = false
       }
     }
@@ -93,11 +97,11 @@ export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configurati
       async function req(){
         await requestAgain()
         reqAgain.current = false
-        if(setLoading) setLoading(false)
+        if(fetchParams.setLoading) fetchParams.setLoading(false)
       }
   
       req()
-    }, [authDependency])
+    }, [fetchParams.authDependency])
   
   
     return fetchCall
