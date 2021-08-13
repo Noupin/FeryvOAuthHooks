@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 
 //First Party Imports
-import { AuthenticateApi, Configuration, RefreshRequest } from "../Swagger";
 import { errorCallback, responseCallback } from "../types";
+import { AuthenticateApi, Configuration,
+  ConfigurationParameters, RefreshRequest } from "../Swagger";
 
 
 export interface IFetchCallbacks{
@@ -14,8 +15,8 @@ export interface IFetchCallbacks{
   onSecondAuthError: errorCallback
 }
 
-export function fetchHookFactory(callbacks: IFetchCallbacks, config: Configuration){
-  const authApi = new AuthenticateApi(config)
+export function fetchHookFactory(callbacks: IFetchCallbacks, config: ConfigurationParameters){
+  const authApi = new AuthenticateApi(new Configuration(config))
 
 
   function useFetch<T, U, V>(thisArg: U,
