@@ -12,8 +12,8 @@ interface IRefreshCallbacks{
 export function refreshHookFactory(callbacks: IRefreshCallbacks, config: Configuration){
   const authApi = new AuthenticateApi(config)
 
-  function useRefresh(refreshParams: RefreshRequest={}, setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{
-    
+  function useRefresh(refreshParams: RefreshRequest={},
+    setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{
     async function fetchRefresh(){
       if(setLoading) setLoading(true);
 

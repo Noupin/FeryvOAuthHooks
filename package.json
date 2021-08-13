@@ -20,7 +20,7 @@
     "url": "https://github.com/Noupin/FeryvOAuthHooks/issues"
   },
   "publishConfig": {
-    "@noupin:registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com/@noupin"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
