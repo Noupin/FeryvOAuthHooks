@@ -1,0 +1,31 @@
+name: Build Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  buildAndPublish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          registry-url: https://npm.pkg.github.com/
+          scope: '@noupin'
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Builds JS and Types
+        run: npm run build
+      - name: Publishing To Github NPM
+        run: npm publish --@noupin:registry=https://npm.pkg.github.com/
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
