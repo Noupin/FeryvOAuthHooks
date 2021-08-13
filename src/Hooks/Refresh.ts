@@ -3,7 +3,7 @@ import { AuthenticateApi, Configuration, RefreshRequest } from "../Swagger";
 import { errorCallback, responseCallback } from "../types";
 
 
-interface IRefreshCallbacks{
+export interface IRefreshCallbacks{
   onSuccess: responseCallback
   onError: errorCallback
 }

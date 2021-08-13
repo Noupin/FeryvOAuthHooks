@@ -7,7 +7,7 @@ import { AuthenticateApi, Configuration, RefreshRequest } from "../Swagger";
 import { errorCallback, responseCallback } from "../types";
 
 
-interface IFetchCallbacks{
+export interface IFetchCallbacks{
   onAuthSuccess: responseCallback
   onError: errorCallback
   onAuthError: errorCallback
