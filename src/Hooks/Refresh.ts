@@ -2,6 +2,7 @@
 import { errorCallback, responseCallback } from "../types";
 import { AuthenticateApi, Configuration,
   ConfigurationParameters, RefreshRequest } from "../Swagger";
+import { FERYV_OAUTH_URL } from "../constants";
 
 
 export interface IRefreshCallbacks{
@@ -11,7 +12,7 @@ export interface IRefreshCallbacks{
 
 
 export function refreshHookFactory(callbacks: IRefreshCallbacks, config: ConfigurationParameters){
-  const authApi = new AuthenticateApi(new Configuration(config))
+  const authApi = new AuthenticateApi(new Configuration({basePath: FERYV_OAUTH_URL, ...config}))
 
   function useRefresh(refreshParams: RefreshRequest={},
     setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{

@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { errorCallback, responseCallback } from "../types";
 import { AuthenticateApi, Configuration,
   ConfigurationParameters, RefreshRequest } from "../Swagger";
+import { FERYV_OAUTH_URL } from "../constants";
 
 
 export interface IFetchCallbacks{
@@ -25,7 +26,7 @@ export interface IFetchParams<T, U, V>{
 }
 
 export function fetchHookFactory(callbacks: IFetchCallbacks, config: ConfigurationParameters){
-  const authApi = new AuthenticateApi(new Configuration(config))
+  const authApi = new AuthenticateApi(new Configuration({basePath: FERYV_OAUTH_URL, ...config}))
 
 
   function useFetch<T, U, V>(fetchParams: IFetchParams<T, U, V>):
