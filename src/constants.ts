@@ -1,1 +1,1 @@
-export const FERYV_OAUTH_URL = 'http://auth.localhost';
+export const FERYV_OAUTH_URL = 'http://auth.feryv.com';
