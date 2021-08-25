@@ -10,29 +10,27 @@ import { AuthenticateApi, Configuration,
 import { FERYV_OAUTH_URL } from "../constants";
 
 
-export interface IFetchCallbacks{
+export interface ILogoutCallbacks{
   onAuthSuccess: responseCallback
   onError: errorCallback
   onAuthError: errorCallback
   onSecondAuthError: errorCallback
 }
 
-export interface IFetchParams<T>{
+export interface ILogoutParams{
   authDependency: any
   setData: React.Dispatch<React.SetStateAction<LogoutResponse | undefined>> | ((requestParmaters: LogoutResponse, ...args: any[]) => void)
   refreshParams?: RefreshRequest
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function logoutHookFactory(callbacks: IFetchCallbacks, config: ConfigurationParameters){
+export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters){
   const authApi = new AuthenticateApi(new Configuration({basePath: FERYV_OAUTH_URL, ...config}))
 
 
-  function useFetch<T>(fetchParams: IFetchParams<T>):
-  (requestParams?: T, ...args: any[]) => Promise<void>{
+  function useFetch(fetchParams: ILogoutParams): () => Promise<void>{
   
     const reqAgain = useRef(false)
-    const reqParams = useRef<T>()
     const argParams = useRef<any[]>()
   
   
@@ -66,10 +64,9 @@ export function logoutHookFactory(callbacks: IFetchCallbacks, config: Configurat
     }
   
   
-    async function fetchCall(requestParams?: T, ...args: any[]){
+    async function fetchCall(...args: any[]){
       if(fetchParams.setLoading) fetchParams.setLoading(true);
   
-      reqParams.current = requestParams
       argParams.current = args
   
       try{

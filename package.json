@@ -3,7 +3,7 @@
   "author": "Noupin",
   "license": "MIT",
   "description": "Hooks that integrate with Feryv OAuth for authentication.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": false,
   "keywords": [
     "feryv",
