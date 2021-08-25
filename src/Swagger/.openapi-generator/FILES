@@ -1,7 +1,7 @@
-.openapi-generator-ignore
 apis/AuthenticateApi.ts
 apis/index.ts
 index.ts
+models/LogoutResponse.ts
 models/RefreshResponse.ts
 models/index.ts
 runtime.ts

@@ -9,6 +9,13 @@ definitions:
         type: string
         x-nullable: true
     type: object
+  LogoutResponse:
+    properties:
+      msg:
+        default: ''
+        type: string
+        x-nullable: true
+    type: object
 host: \
 info:
   description: Feryv OAuth Server API documentation
@@ -41,6 +48,20 @@ paths:
       security:
       - Refresh_Token_Cookie: []
       - CSRF_Refresh: []
+      - Bearer: []
+      tags:
+      - Authenticate
+  /api/logout:
+    get:
+      description: Logs the user out.
+      operationId: logout
+      parameters: []
+      responses:
+        default:
+          description: The status of the user logging out.
+          schema:
+            $ref: '#/definitions/LogoutResponse'
+      security:
       - Bearer: []
       tags:
       - Authenticate

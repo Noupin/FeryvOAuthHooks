@@ -10,6 +10,8 @@
 # production
 /dist
 /public
+/OpenAPI/
+openapitools.json
 
 # misc
 .DS_Store

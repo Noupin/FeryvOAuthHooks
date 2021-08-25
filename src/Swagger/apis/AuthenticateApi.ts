@@ -15,6 +15,9 @@
 
 import * as runtime from '../runtime';
 import {
+    LogoutResponse,
+    LogoutResponseFromJSON,
+    LogoutResponseToJSON,
     RefreshResponse,
     RefreshResponseFromJSON,
     RefreshResponseToJSON,
@@ -31,9 +34,35 @@ export interface RefreshRequest {
 export class AuthenticateApi extends runtime.BaseAPI {
 
     /**
+     * Logs the user out.
+     */
+    async logoutRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<LogoutResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/logout`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LogoutResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Logs the user out.
+     */
+    async logout(initOverrides?: RequestInit): Promise<LogoutResponse> {
+        const response = await this.logoutRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Refreshes the users access token.
      */
-    async refreshRaw(requestParameters: RefreshRequest): Promise<runtime.ApiResponse<RefreshResponse>> {
+    async refreshRaw(requestParameters: RefreshRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<RefreshResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -51,7 +80,7 @@ export class AuthenticateApi extends runtime.BaseAPI {
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        });
+        }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => RefreshResponseFromJSON(jsonValue));
     }
@@ -59,8 +88,8 @@ export class AuthenticateApi extends runtime.BaseAPI {
     /**
      * Refreshes the users access token.
      */
-    async refresh(requestParameters: RefreshRequest): Promise<RefreshResponse> {
-        const response = await this.refreshRaw(requestParameters);
+    async refresh(requestParameters: RefreshRequest, initOverrides?: RequestInit): Promise<RefreshResponse> {
+        const response = await this.refreshRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
