@@ -24,8 +24,8 @@ import {
 } from '../models';
 
 export interface RefreshRequest {
-    feryvrefreshtoken?: string | null;
     feryvcsrftoken?: string | null;
+    feryvrefreshtoken?: string | null;
 }
 
 /**
@@ -40,6 +40,10 @@ export class AuthenticateApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
 
         const response = await this.request({
             path: `/api/logout`,
@@ -67,12 +71,16 @@ export class AuthenticateApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        if (requestParameters.feryvcsrftoken !== undefined && requestParameters.feryvcsrftoken !== null) {
+            headerParameters['Feryvcsrftoken'] = String(requestParameters.feryvcsrftoken);
+        }
+
         if (requestParameters.feryvrefreshtoken !== undefined && requestParameters.feryvrefreshtoken !== null) {
             headerParameters['Feryvrefreshtoken'] = String(requestParameters.feryvrefreshtoken);
         }
 
-        if (requestParameters.feryvcsrftoken !== undefined && requestParameters.feryvcsrftoken !== null) {
-            headerParameters['Feryvcsrftoken'] = String(requestParameters.feryvcsrftoken);
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Bearer authentication
         }
 
         const response = await this.request({

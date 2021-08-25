@@ -1,16 +1,16 @@
 definitions:
-  RefreshResponse:
+  LogoutResponse:
     properties:
-      accessToken:
-        default: ''
-        type: string
       msg:
         default: ''
         type: string
         x-nullable: true
     type: object
-  LogoutResponse:
+  RefreshResponse:
     properties:
+      accessToken:
+        default: ''
+        type: string
       msg:
         default: ''
         type: string
@@ -22,6 +22,20 @@ info:
   title: Feryv OAuth
   version: 1.0.0
 paths:
+  /api/logout:
+    get:
+      description: Logs the user out.
+      operationId: logout
+      parameters: []
+      responses:
+        default:
+          description: The status of the user logging out.
+          schema:
+            $ref: '#/definitions/LogoutResponse'
+      security:
+      - Bearer: []
+      tags:
+      - Authenticate
   /api/refresh:
     get:
       description: Refreshes the users access token.
@@ -29,13 +43,13 @@ paths:
       parameters:
       - default: null
         in: header
-        name: Feryvrefreshtoken
+        name: Feryvcsrftoken
         required: false
         type: string
         x-nullable: true
       - default: null
         in: header
-        name: Feryvcsrftoken
+        name: Feryvrefreshtoken
         required: false
         type: string
         x-nullable: true
@@ -51,21 +65,20 @@ paths:
       - Bearer: []
       tags:
       - Authenticate
-  /api/logout:
-    get:
-      description: Logs the user out.
-      operationId: logout
-      parameters: []
-      responses:
-        default:
-          description: The status of the user logging out.
-          schema:
-            $ref: '#/definitions/LogoutResponse'
-      security:
-      - Bearer: []
-      tags:
-      - Authenticate
 schemes:
 - http
 - https
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+  CSRF_Refresh:
+    in: cookie
+    name: Feryvcsrftoken
+    type: apiKey
+  Refresh_Token_Cookie:
+    in: cookie
+    name: Feryvrefreshtoken
+    type: apiKey
 swagger: '2.0'
