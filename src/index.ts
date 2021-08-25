@@ -7,5 +7,5 @@ export type { IRefreshCallbacks } from "./Hooks/Refresh";
 export type { IFetchCallbacks, IFetchParams } from "./Hooks/Fetch";
 export type { ILogoutCallbacks, ILogoutParams } from "./Hooks/Logout";
 
-export type { RefreshResponse } from "./Swagger";
 export type { responseCallback, errorCallback } from "./types";
+export type { RefreshResponse, LogoutResponse } from "./Swagger";
