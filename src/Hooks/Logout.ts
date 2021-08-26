@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 //Third Party Imports
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 //First Party Imports
 import { errorCallback, responseCallback } from "../types";
 import { AuthenticateApi, Configuration,
   ConfigurationParameters, LogoutResponse, RefreshRequest } from "../Swagger";
 import { FERYV_OAUTH_URL } from "../constants";
+import { API } from "../Helpers/Api";
 
 
 export interface ILogoutCallbacks{
@@ -24,22 +25,21 @@ export interface ILogoutParams{
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters){
-  const conf = useRef(new Configuration({
+export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters, apiKey: string){
+  const conf: ConfigurationParameters = {
     basePath: FERYV_OAUTH_URL,
     credentials: 'include',
+    apiKey: apiKey,
     ...config
-  }))
-  const authApi = useRef(new AuthenticateApi(conf.current))
+  }
 
-
-  function useFetch(logoutParams: ILogoutParams): (apiKey: string) => Promise<void>{
+  function useFetch(logoutParams: ILogoutParams, apiKey: string): () => Promise<void>{
     const reqAgain = useRef(false)
     const argParams = useRef<any[]>()
 
 
     async function request(){
-      const response = await authApi.current.logout()
+      const response = await new API(apiKey).Authenticate.logout()
       if(!argParams.current) logoutParams.setData(response);
       else logoutParams.setData(response, ...argParams.current);
     }
@@ -58,7 +58,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
 
     async function authenticate(){
       try{
-        const response = await authApi.current.refresh(logoutParams.refreshParams ?
+        const response = await new API("").Authenticate.refresh(logoutParams.refreshParams ?
           logoutParams.refreshParams : {})
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
@@ -69,11 +69,9 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     }
 
 
-    async function fetchLogout(apiKey: string, ...args: any[]){
+    async function fetchCall(...args: any[]){
       if(logoutParams.setLoading) logoutParams.setLoading(true);
 
-      conf.current = new Configuration({...conf.current, apiKey: apiKey})
-      authApi.current = new AuthenticateApi(conf.current)
       argParams.current = args
 
       try{
@@ -108,7 +106,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     }, [logoutParams.authDependency])
 
 
-    return fetchLogout
+    return fetchCall
   }
 
   return useFetch
