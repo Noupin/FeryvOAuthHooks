@@ -33,7 +33,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
 
 
     async function request(){
-      const response = await new API(apiKey).Authenticate.logout()
+      const response = await new API(apiKey, new Configuration(config)).Authenticate.logout()
       if(!argParams.current) logoutParams.setData(response);
       else logoutParams.setData(response, ...argParams.current);
     }
@@ -52,7 +52,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
 
     async function authenticate(){
       try{
-        const response = await new API("").Authenticate.refresh(logoutParams.refreshParams ?
+        const response = await new API("", new Configuration(config)).Authenticate.refresh(logoutParams.refreshParams ?
           logoutParams.refreshParams : {})
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
