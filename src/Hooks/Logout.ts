@@ -25,13 +25,7 @@ export interface ILogoutParams{
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters, apiKey: string){
-  const conf: ConfigurationParameters = {
-    basePath: FERYV_OAUTH_URL,
-    credentials: 'include',
-    apiKey: apiKey,
-    ...config
-  }
+export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters){
 
   function useFetch(logoutParams: ILogoutParams, apiKey: string): () => Promise<void>{
     const reqAgain = useRef(false)
