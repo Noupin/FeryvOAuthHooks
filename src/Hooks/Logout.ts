@@ -5,9 +5,8 @@ import { useEffect, useRef } from "react";
 
 //First Party Imports
 import { errorCallback, responseCallback } from "../types";
-import { AuthenticateApi, Configuration,
+import { Configuration,
   ConfigurationParameters, LogoutResponse, RefreshRequest } from "../Swagger";
-import { FERYV_OAUTH_URL } from "../constants";
 import { API } from "../Helpers/Api";
 
 
@@ -27,13 +26,14 @@ export interface ILogoutParams{
 
 export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters){
 
-  function useFetch(logoutParams: ILogoutParams, apiKey: string): () => Promise<void>{
+  function useLogout(logoutParams: ILogoutParams): (apiKey: string) => Promise<void>{
     const reqAgain = useRef(false)
     const argParams = useRef<any[]>()
+    const api = new API("", new Configuration(config))
 
 
     async function request(){
-      const response = await new API(apiKey, new Configuration(config)).Authenticate.logout()
+      const response = await api.Authenticate.logout()
       if(!argParams.current) logoutParams.setData(response);
       else logoutParams.setData(response, ...argParams.current);
     }
@@ -52,7 +52,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
 
     async function authenticate(){
       try{
-        const response = await new API("", new Configuration(config)).Authenticate.refresh(logoutParams.refreshParams ?
+        const response = await api.Authenticate.refresh(logoutParams.refreshParams ?
           logoutParams.refreshParams : {})
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
@@ -63,9 +63,10 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     }
 
 
-    async function fetchCall(...args: any[]){
+    async function fetchCall(apiKey: string, ...args: any[]){
       if(logoutParams.setLoading) logoutParams.setLoading(true);
 
+      api.apiKey = apiKey
       argParams.current = args
 
       try{
@@ -103,5 +104,5 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     return fetchCall
   }
 
-  return useFetch
+  return useLogout
 }
