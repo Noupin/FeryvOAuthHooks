@@ -73,6 +73,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
       if(logoutParams.setLoading) logoutParams.setLoading(true);
 
       conf.current = new Configuration({...conf.current, apiKey: apiKey})
+      authApi.current = new AuthenticateApi(conf.current)
       argParams.current = args
 
       try{
