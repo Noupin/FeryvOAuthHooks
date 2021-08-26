@@ -12,7 +12,8 @@ export interface IRefreshCallbacks{
 
 
 export function refreshHookFactory(callbacks: IRefreshCallbacks, config: ConfigurationParameters){
-  const authApi = new AuthenticateApi(new Configuration({basePath: FERYV_OAUTH_URL, ...config}))
+  const conf = new Configuration({basePath: FERYV_OAUTH_URL, credentials: 'include', ...config})
+  const authApi = new AuthenticateApi(conf)
 
   function useRefresh(refreshParams: RefreshRequest={},
     setLoading?: React.Dispatch<React.SetStateAction<boolean>>): () => Promise<void>{

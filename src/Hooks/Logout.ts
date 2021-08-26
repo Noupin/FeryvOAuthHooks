@@ -25,22 +25,23 @@ export interface ILogoutParams{
 }
 
 export function logoutHookFactory(callbacks: ILogoutCallbacks, config: ConfigurationParameters){
-  const authApi = new AuthenticateApi(new Configuration({basePath: FERYV_OAUTH_URL, ...config}))
 
-
-  function useFetch(fetchParams: ILogoutParams): () => Promise<void>{
-  
+  function useLogout(logoutParams: ILogoutParams, apiKey: string): () => Promise<void>{
     const reqAgain = useRef(false)
     const argParams = useRef<any[]>()
-  
-  
+
+    const conf = new Configuration({basePath: FERYV_OAUTH_URL, credentials: 'include',
+    apiKey: apiKey, ...config})
+    const authApi = new AuthenticateApi(conf)
+
+
     async function request(){
       const response = await authApi.logout()
-      if(!argParams.current) fetchParams.setData(response);
-      else fetchParams.setData(response, ...argParams.current);
+      if(!argParams.current) logoutParams.setData(response);
+      else logoutParams.setData(response, ...argParams.current);
     }
-  
-  
+
+
     async function requestAgain(){
       try{
         await request()
@@ -48,13 +49,13 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
       catch(error){
         callbacks.onSecondAuthError(error)
       }
-      if(fetchParams.setLoading) fetchParams.setLoading(false)
+      if(logoutParams.setLoading) logoutParams.setLoading(false)
     }
-  
-  
+
+
     async function authenticate(){
       try{
-        const response = await authApi.refresh(fetchParams.refreshParams ? fetchParams.refreshParams : {})
+        const response = await authApi.refresh(logoutParams.refreshParams ? logoutParams.refreshParams : {})
         reqAgain.current = true
         callbacks.onAuthSuccess(response)
       }
@@ -62,13 +63,13 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
         callbacks.onAuthError(error)
       }
     }
-  
-  
-    async function fetchCall(...args: any[]){
-      if(fetchParams.setLoading) fetchParams.setLoading(true);
-  
+
+
+    async function fetchLogout(...args: any[]){
+      if(logoutParams.setLoading) logoutParams.setLoading(true);
+
       argParams.current = args
-  
+
       try{
         await request()
       }
@@ -81,28 +82,28 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
         }
       }
   
-      if(fetchParams.setLoading && !reqAgain.current){
-        fetchParams.setLoading(false);
+      if(logoutParams.setLoading && !reqAgain.current){
+        logoutParams.setLoading(false);
         reqAgain.current = false
       }
     }
-  
-  
+
+
     useEffect(() => {
       if(!reqAgain.current) return;
-  
+
       async function req(){
         await requestAgain()
         reqAgain.current = false
-        if(fetchParams.setLoading) fetchParams.setLoading(false)
+        if(logoutParams.setLoading) logoutParams.setLoading(false)
       }
-  
+
       req()
-    }, [fetchParams.authDependency])
-  
-  
-    return fetchCall
+    }, [logoutParams.authDependency])
+
+
+    return fetchLogout
   }
 
-  return useFetch
+  return useLogout
 }
