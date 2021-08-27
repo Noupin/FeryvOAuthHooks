@@ -63,7 +63,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     }
 
 
-    async function fetchCall(apiKey: string, ...args: any[]){
+    async function logoutCall(apiKey: string, ...args: any[]){
       if(logoutParams.setLoading) logoutParams.setLoading(true);
 
       api.apiKey = apiKey
@@ -101,7 +101,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
     }, [logoutParams.authDependency])
 
 
-    return fetchCall
+    return logoutCall
   }
 
   return useLogout

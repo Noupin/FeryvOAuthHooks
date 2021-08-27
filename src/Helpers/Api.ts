@@ -16,9 +16,9 @@ export const AuthenticateAPIFactory = (apiKey?: string, config?: ConfigurationPa
 
 export class API{
   private key: string
-  private config?: Configuration
+  private config?: ConfigurationParameters
 
-  constructor(apiKey?: string, config?: Configuration){
+  constructor(apiKey?: string, config?: ConfigurationParameters){
     this.config = config
     if(!apiKey){
       this.key = ""
