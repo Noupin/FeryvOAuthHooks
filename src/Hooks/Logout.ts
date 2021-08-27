@@ -29,7 +29,7 @@ export function logoutHookFactory(callbacks: ILogoutCallbacks, config: Configura
   function useLogout(logoutParams: ILogoutParams): (apiKey: string) => Promise<void>{
     const reqAgain = useRef(false)
     const argParams = useRef<any[]>()
-    const api = new API("", new Configuration(config))
+    const api = new API("", config)
 
 
     async function request(){
